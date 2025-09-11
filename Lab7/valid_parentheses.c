@@ -1,78 +1,71 @@
-
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 
-typedef struct stack {
-    int top;
-    char arr [100];
+#define MAX_SIZE 100
+int top = -1;
 
-}stack;
+char stack[MAX_SIZE];
 
-stack st;
-
-void create_stack() {
-    st.top=-1;
-}
-char peek() {
-    if (st.top==-1) {
-        return -1;
+void push(char ch) {
+    if (top == MAX_SIZE-1) {
+        printf("Stack_overflow.");
+        return;
     }
-    return st.arr[st.top];
+
+    stack[++top] = ch;
 }
 
 char pop() {
-    if (st.top==-1) {
-        return -1;
+    if (top==-1) {
+        printf("Stack_underflow.");
+        return '\0';
     }
-    char character = peek();
-    st.top--;
-    return character;
+    return stack[top--];
 }
 
-void push(char character) {
-    if (st.top == 99) {
-        printf("stack overflow");
-        return;
+char peek() {
+    if (top==-1) {
+        printf("Stack_underflow.");
+        return '\0';
     }
-    st.arr[++st.top] = character;
+    return stack[top];
 }
 
-bool isEmpty() {
-    if (st.top==-1)
-        return true;
-    return false;
+int isEmpty() {
+    return top==-1;
 }
+
 int main() {
-    create_stack();
-
-    char str [1000];
-    printf("Enter a string: ");
+    char str[100];
+    printf("Enter an expression: ");
     scanf("%s",str);
-    int i=0,n=strlen(str);
-
-    for (i=0; i<n; i++) {
-        if (str[i]=='{'||str[i]=='['||str[i]=='(') {
+    for (int i=0; i<strlen(str); i++) {
+        if (str[i]=='('||str[i]=='['||str[i]=='{') {
             push(str[i]);
         }
-        else if ((str[i]=='}'&&peek()=='{')||(str[i]==']'&&peek()=='[')||(str[i]==')'&&peek()=='(')) {
-            pop();
-        }
-        else {
-            printf("Not a valid parentheses");
-            return 0;
+        else if (str[i]==')'||str[i]==']'||str[i]=='}') {
+            if (isEmpty()) {
+                printf("Invalid\n");
+                return 0;
+            }
+            if ((str[i]==')'&&peek()=='(')||(str[i]==']'&&peek()=='[')||(str[i]=='}'&&peek()=='{')) {
+                pop();
+            }
+            else {
+                printf("Invalid\n");
+                return 0;
+            }
         }
 
     }
-
     if (isEmpty()) {
-        printf("Valid parentheses");
+        printf("Valid.");
     }
     else {
-        printf("Not a valid parentheses");
+        printf("invalild");
     }
-
 }
-
-
+//
+// Created by ABHIJEET CHANDRA on 11-09-2025.
+//
