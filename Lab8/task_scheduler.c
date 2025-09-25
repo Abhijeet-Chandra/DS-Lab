@@ -15,58 +15,53 @@ int rear = -1;
 int front = -1;
 
 int isEmpty() {
-    return (front==-1);
+    return (front== rear);
 }
 
-void enqueue(struct Tasks printTask) {
-    if (rear==MAX_SIZE-1) {
-        printf("queue is full.\n");
+int isFull() {
+    return (!isEmpty()&&rear == MAX_SIZE-1);
+}
+
+void enqueue(struct Tasks task) {
+    if (isFull()) {
+        printf("Queue is Full.\n");
         return;
     }
-    if (isEmpty()) {
-        front++;
-        queue[++rear]=printTask;
-        return;
-    }
-    queue[++rear] = printTask;
+    queue[++rear] = task;
 }
 
 struct Tasks dequeue() {
     if (isEmpty()) {
-        printf("Empty queue!");
-        struct Tasks st = {0," "};
+        printf("Queue is Empty.\n");
+        front = rear = -1;
+        struct Tasks st = {0, " "};
         return st;
     }
-   struct Tasks returnval = queue[front];
-    if (front == rear) {
-        front = rear = -1;
-    } else {
-        front++;
-    }
+    struct Tasks returnval = queue[++front];
     return returnval;
 }
 
 struct Tasks peek() {
     if (isEmpty()) {
-        printf("Empty queue!");
-        struct Tasks st = {0," "};
+        printf("Queue is Empty.\n");
+        front = rear = -1;
+        struct Tasks st = {0, " "};
         return st;
     }
-    return queue[front];
+    return queue[front+1];
 }
 
 void display() {
     if (isEmpty()) {
-        printf("Empty queue!");
+        printf("Queue is Empty.\n");
+        front = rear = -1;
         return;
     }
-    int copy = front;
-    while (copy!=rear+1) {
-        printf("Document id: %d, ",queue[copy].doc_id);
-        printf("Name: %s\n",queue[copy].name);
-        copy++;
+    for (int i=front+1; i<=rear; i++) {
+        printf("Document id: %d\n",queue[i].doc_id);
+        printf("Document Name: %s\n",queue[i].name);
+        printf("\n");
     }
-    printf("\n");
 }
 
 int main() {
