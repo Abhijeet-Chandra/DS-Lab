@@ -63,17 +63,27 @@ TreeNode* peek() {
 }
 
 //creating Tree
-int index = -1;
-TreeNode* createBinaryTree(int preorder[]) {
-    index++;
-    if (preorder[index]==-1) {
-        return NULL;
+
+TreeNode* createBinaryTree() {
+    int op;
+    TreeNode* node = (TreeNode*)malloc(sizeof(TreeNode));
+    printf("Enter value: ");
+    scanf("%d",&node->treeData);
+    printf("Do you want to create Left of %d: ",node->treeData);
+    scanf("%d",&op);
+    if (op) {
+        node->left = createBinaryTree();
+    }else {
+        node->left = NULL;
     }
-    TreeNode* root = (TreeNode*)malloc(sizeof(TreeNode));
-    root->treeData = preorder[index];
-    root->left = createBinaryTree(preorder);
-    root->right = createBinaryTree(preorder);
-    return root;
+    printf("Do you want to create right of %d: ",node->treeData);
+    scanf("%d",&op);
+    if (op) {
+        node->right = createBinaryTree();
+    }else {
+        node->right = NULL;
+    }
+    return node;
 }
 
 void recursivePreorderTraversal(TreeNode* root) {
@@ -202,9 +212,7 @@ void print_parent(TreeNode* root, int target) {
 }
 
 int main() {
-    int preorder[] = {1,2,-1,-1,3,4,-1,-1,5,-1,-1};
-    TreeNode* root = createBinaryTree(preorder);
-
+    TreeNode* root  = createBinaryTree();
     int choice, target;
     do {
         printf("\n\n--- Binary Tree Menu ---\n");
