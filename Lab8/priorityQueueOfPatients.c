@@ -1,16 +1,19 @@
-#include <stdio.h>
-#include <stdlib.h>
+//Linked List implementation:
+
+#include<stdio.h>
+#include<stdlib.h>
 #include <string.h>
 
 typedef struct Node {
-        char name[20];
-        int age;
-        int priority;
+    char name[20];
+    int age;
+    int priority;
     struct Node* next;
 }Node;
 
-Node* head = NULL;
-Node* tail = NULL;
+Node* front = NULL;
+Node* rear = NULL;
+
 Node* createNode(char name[], int age, int priority) {
     Node* newNode = (Node*)malloc(sizeof(Node));
     strcpy(newNode->name,name);
@@ -19,26 +22,30 @@ Node* createNode(char name[], int age, int priority) {
     newNode->next = NULL;
     return newNode;
 }
+
 int isEmpty() {
-    return head==NULL;
+    return front==NULL;
 }
+
 void enqueue(char name[], int age, int priority) {
     Node* newNode = createNode(name,age,priority);
+    if (!newNode) {
+        printf("Memory allocation failed.\n");
+        return;
+    }
     if (isEmpty()) {
-        head = tail = newNode;
+        front = rear = newNode;
         return;
     }
-    if (head->priority>newNode->priority) {
-        newNode->next = head;
-        head = newNode;
+    if (front->priority>newNode->priority) {
+        newNode->next = front;
+        front = newNode;
         return;
     }
-    Node* temp = head;
-    Node* temp2 = head;
+    Node* temp = front, *temp2 = front;
     while (temp!=NULL) {
-
         if (temp->priority>newNode->priority) {
-            newNode->next = temp2->next;
+            newNode->next = temp;
             temp2->next = newNode;
             return;
         }
@@ -46,50 +53,43 @@ void enqueue(char name[], int age, int priority) {
         temp = temp->next;
     }
     temp2->next = newNode;
-    tail = newNode;
+    rear = newNode;
 }
 
-Node dequeue() {
+Node* dequeue() {
     if (isEmpty()) {
         printf("Queue is empty.\n");
-        Node st = {" ",0, -1};
-        return st;
+        return NULL;
     }
-    Node returnval = *head;
-    Node* t = head;
-    head = head->next;
-    if (head==NULL) {
-        tail = NULL;
-    }
-    free(t);
-    return returnval;
+    Node* returnValue = front;
+    front = front->next;
+    if (front==NULL) front=rear=NULL;
+    return returnValue;
 }
 
-Node peek() {
+Node* peek() {
     if (isEmpty()) {
         printf("Queue is empty.\n");
-        Node st = {" ",0, -1};
-        return st;
+        return NULL;
     }
-    return *head;
+    return front;
 }
 
-void displayQueue() {
+void display() {
     if (isEmpty()) {
-        printf("Empty queue.\n");
+        printf("Queue is empty.\n");
         return;
     }
-    Node* temp = head;
+    Node* temp = front;
     while (temp!=NULL) {
-        printf("Patient Name: %s\n",temp->name);
-        printf("Patient age: %d\n",temp->age);
+        printf("Name: %s\n",temp->name);
+        printf("Age: %d\n",temp->age);
         printf("Priority: %d\n",temp->priority);
         temp = temp->next;
-        printf("-------------------------------\n");
+        printf("\n");
     }
-    printf("END\n");
+    printf("\n");
 }
-
 int main() {
     int choice, age, priority;
     char name[20];
@@ -116,28 +116,29 @@ int main() {
                 break;
 
             case 2:
-                Node returnval = dequeue();
-                if (returnval.priority != -1) {
+                Node* returnval = dequeue();
+                if (returnval!=NULL) {
                     printf("Dequeued: \n");
-                    printf("Patient Name: %s\n",returnval.name);
-                    printf("Patient Age: %d\n",returnval.age);
-                    printf("Priority: %d\n",returnval.priority);
+                    printf("Patient Name: %s\n",returnval->name);
+                    printf("Patient Age: %d\n",returnval->age);
+                    printf("Priority: %d\n",returnval->priority);
+                    free(returnval);
                 }
                 break;
 
             case 3:
-                Node returnval1 = peek();
-                if (returnval1.priority != -1) {
+                Node* returnval1 = peek();
+                if (returnval1!=NULL) {
                     printf("Patient Details: \n");
-                    printf("Patient Name: %s\n",returnval1.name);
-                    printf("Patient Age: %d\n",returnval1.age);
-                    printf("Priority: %d\n",returnval1.priority);
+                    printf("Patient Name: %s\n",returnval1->name);
+                    printf("Patient Age: %d\n",returnval1->age);
+                    printf("Priority: %d\n",returnval1->priority);
                 }
                 break;
 
             case 4:
                 printf("Queue contents:\n ");
-                displayQueue();
+                display();
                 printf("\n");
                 break;
 
@@ -154,6 +155,7 @@ int main() {
     return 0;
 }
 
+
 //
-// Created by ABHIJEET CHANDRA on 20-09-2025.
+// Created by ABHIJEET CHANDRA on 29-09-2025.
 //
