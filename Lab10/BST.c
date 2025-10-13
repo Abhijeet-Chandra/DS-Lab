@@ -1,8 +1,9 @@
 #include<stdio.h>
 #include<stdlib.h>
-
+# define MAX(a,b) ((a) > (b) ? (a) : (b))
 typedef struct TreeNode {
     int data;
+    int height;
     struct TreeNode* left;
     struct TreeNode* right;
 }TreeNode;
@@ -11,6 +12,7 @@ TreeNode* createTreeNode(int data) {
     TreeNode* newNode = (TreeNode*)malloc(sizeof(TreeNode));
     newNode->data = data;
     newNode->left = newNode->right = NULL;
+    newNode->height = 1;
     return newNode;
 }
 
@@ -114,6 +116,77 @@ TreeNode* deleteNodeBST(TreeNode* root, int element) {
     }
     return root;
 }
+
+//get height
+int getHeight(TreeNode* root) {
+    if (root==NULL)return 0;
+    return 1+MAX(getHeight(root->left),getHeight(root->right));
+}
+
+//get balance factor
+int getBalance(TreeNode* root) {
+    if (root==NULL)return 0;
+    return getHeight(root->left)-getHeight(root->right);
+}
+//left rotation
+TreeNode* leftRotate(TreeNode* root) {
+    TreeNode* child = root->right;
+    TreeNode* childLeft = child->left;
+    child->left = root;
+    root->right = childLeft;
+    root->height = getHeight(root);
+    child->height = getHeight(child);
+    return child;
+}
+
+//right rotation
+TreeNode* rightRotate(TreeNode* root) {
+    TreeNode* child = root->left;
+    TreeNode* childRight = child->right;
+    child->right = root;
+    root->left = childRight;
+    root->height = getHeight(root);
+    child->height = getHeight(child);
+    return child;
+}
+
+TreeNode* createAVLTree(TreeNode* root, int data) {
+    if (root==NULL) {
+        return createTreeNode(data);
+    }
+    if (data<root->data) {
+        root->left = createAVLTree(root->left,data);
+    }
+    else if (data>root->data) {
+        root->right = createAVLTree(root->right,data);
+    }
+    else {
+        return root;
+    }
+
+    root->height = getHeight(root);
+    int balance = getBalance(root);
+
+    //left left rotation
+    if (balance>1&&data<root->left->data) {
+        return rightRotate(root);
+    }
+    //right right rotation
+    if (balance<-1&&data>root->right->data) {
+        return leftRotate(root);
+    }
+    //left right rotation
+    if (balance>1&&data>root->left->data) {
+        root->left = leftRotate(root->left);
+        return rightRotate(root);
+    }
+    //right left rotation
+    if (balance<-1&&data<root->right->data) {
+        root->right = rightRotate(root->right);
+        return leftRotate(root);
+    }
+    return root;
+    }
 int main() {
     int n,ele;
     printf("Enter number of nodes:");
@@ -146,4 +219,19 @@ int main() {
     root = deleteNodeBST(root,40);
     printf("After deletion.\n");
     inorder(root);
+    printf("\n");
+
+    printf("AVL Tree Creation.\n");
+    printf("Enter number of nodes:");
+    scanf("%d",&n);
+    TreeNode* AVLroot = NULL;
+    for (int i=0; i<n; i++) {
+        printf("Enter element:");
+        scanf("%d",&ele);
+        AVLroot = createAVLTree(AVLroot,ele);
+    }
+    inorder(AVLroot);
 }
+//
+// Created by ABHIJEET CHANDRA on 13-10-2025.
+//
