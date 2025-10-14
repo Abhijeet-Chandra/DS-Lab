@@ -118,15 +118,15 @@ TreeNode* deleteNodeBST(TreeNode* root, int element) {
 }
 
 //get height
-int getHeight(TreeNode* root) {
+int height(TreeNode* root) {
     if (root==NULL)return 0;
-    return 1+MAX(getHeight(root->left),getHeight(root->right));
+    return root->height;
 }
 
 //get balance factor
 int getBalance(TreeNode* root) {
     if (root==NULL)return 0;
-    return getHeight(root->left)-getHeight(root->right);
+    return height(root->left)-height(root->right);
 }
 //left rotation
 TreeNode* leftRotate(TreeNode* root) {
@@ -134,8 +134,8 @@ TreeNode* leftRotate(TreeNode* root) {
     TreeNode* childLeft = child->left;
     child->left = root;
     root->right = childLeft;
-    root->height = getHeight(root);
-    child->height = getHeight(child);
+    root->height = 1 + MAX(height(root->left), height(root->right));
+    child->height = 1 + MAX(height(child->left), height(child->right));
     return child;
 }
 
@@ -145,8 +145,8 @@ TreeNode* rightRotate(TreeNode* root) {
     TreeNode* childRight = child->right;
     child->right = root;
     root->left = childRight;
-    root->height = getHeight(root);
-    child->height = getHeight(child);
+    root->height = 1 + MAX(height(root->left), height(root->right));
+    child->height = 1 + MAX(height(child->left), height(child->right));
     return child;
 }
 
@@ -164,7 +164,7 @@ TreeNode* createAVLTree(TreeNode* root, int data) {
         return root;
     }
 
-    root->height = getHeight(root);
+    root->height = 1 + MAX(height(root->left), height(root->right));
     int balance = getBalance(root);
 
     //left left rotation
@@ -230,7 +230,15 @@ int main() {
         scanf("%d",&ele);
         AVLroot = createAVLTree(AVLroot,ele);
     }
+    printf("Inorder: ");
     inorder(AVLroot);
+    printf("\n");
+    printf("Preorder: ");
+    preorder(AVLroot);
+    printf("\n");
+    printf("Postorder: ");
+    postorder(AVLroot);
+    printf("\n");
 }
 //
 // Created by ABHIJEET CHANDRA on 13-10-2025.
