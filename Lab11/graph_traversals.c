@@ -120,7 +120,6 @@ graphNode* dequeue() {
 
 
 //BFS traversal:
-int visited[100];
 void BFS(graphNode* head[], int start) {
     int visited[100] = {0};
     enqueue(head[start]);
@@ -139,6 +138,22 @@ void BFS(graphNode* head[], int start) {
     }
 }
 
+//DFS traversal
+int visited[100] = {0};
+void DFS(graphNode* head[], int start) {
+    visited[start] = 1;
+    printf("%d ",head[start]->vertex);
+    graphNode* temp = head[start]->next;
+    while (temp!=NULL) {
+        if (visited[temp->vertex]==0) {
+            visited[temp->vertex]=1;
+            DFS(head,temp->vertex);
+        }
+        temp = temp->next;
+    }
+    front = rear = NULL;
+}
+
 int main() {
     printf("Enter the number of vertices: ");
     scanf("%d",&numVertex);
@@ -150,7 +165,11 @@ int main() {
     }
     readGraph(head);
     printGraph(head);
+    printf("BFS traversal: \n");
     BFS(head,0);
+    printf("\n");
+    printf("DFS traversal: \n");
+    DFS(head,0);
 }
 //
 // Created by ABHIJEET CHANDRA on 20-10-2025.
