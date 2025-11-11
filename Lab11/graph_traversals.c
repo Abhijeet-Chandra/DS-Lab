@@ -1,38 +1,84 @@
 #include<stdio.h>
-#include <stdlib.h>
-//creating adjacency list for graph...
-typedef struct graphNode {
+#include<stdlib.h>
+
+typedef struct queueNode{
+    int data;
+    struct queueNode* next;
+}queueNode;
+
+queueNode* front = NULL, *rear = NULL;
+
+queueNode* createQueueNode(int data){
+    queueNode* newNode = (queueNode*)malloc(sizeof(queueNode));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+int isEmpty(){
+    return front == NULL;
+}
+
+void enqueue(int data){
+    queueNode* newNode = createQueueNode(data);
+    if(newNode==NULL){
+        printf("Memory allocation failed.\n");
+        return;
+    }
+    if(isEmpty()){
+        front = rear = newNode;
+        return;
+    }
+    rear->next = newNode;
+    rear = newNode;
+}
+
+int dequeue(){
+    if(isEmpty()){
+        printf("Queue is empty.\n");
+        return -1;
+    }
+    queueNode* t = front;
+    int returnvalue = front->data;
+    front = front->next;
+    free(t);
+    return returnvalue;
+}
+
+
+typedef struct graphNode{
     int vertex;
     int weight;
     struct graphNode* next;
 }graphNode;
 
-int numVertex;
-int isDirected;
 
-graphNode* createGraphNode(int vertex, int weight) {
+int numVertex, isDirected;
+
+graphNode* createGraphNode(int vertex, int weight){
     graphNode* newNode = (graphNode*)malloc(sizeof(graphNode));
     newNode->vertex = vertex;
     newNode->weight = weight;
     newNode->next = NULL;
     return newNode;
 }
-void readGraph(graphNode* head[]) {
+
+void readGraph(graphNode* head[]){
     graphNode* newNode;
-    int vertex, neighbour,k,weight;
-    for (int i=0; i<numVertex; i++) {
+    int vertex, neighbour, k, weight;
+    for(int i = 0; i<numVertex; i++){
         graphNode* tail = NULL;
-        printf("Enter vertex: \n");
+        printf("Enter Vertex: ");
         scanf("%d",&vertex);
-        if (head[vertex]==NULL)
-            head[vertex] = tail = createGraphNode(vertex,-1);
+        if(head[vertex]==NULL)
+            head[vertex] = createGraphNode(vertex,-1);
         tail = head[vertex];
-        while (tail->next!=NULL) {
+        while(tail->next!=NULL){
             tail = tail->next;
-        }
-        printf("Enter the number of neighbours for vertex %d: ",vertex);
+        }    
+        printf("Enter the number of vertex for Vertex %d: ",vertex);
         scanf("%d",&k);
-        for (int j=0; j<k; j++) {
+        for(int j =0; j<k; j++){
             printf("Enter vertex number: ");
             scanf("%d",&neighbour);
             printf("Enter weight: ");
@@ -40,13 +86,13 @@ void readGraph(graphNode* head[]) {
             newNode = createGraphNode(neighbour,weight);
             tail->next = newNode;
             tail = newNode;
-            if (!isDirected) {
+            if(!isDirected){
                 graphNode* revNode = createGraphNode(vertex,weight);
-                if (head[neighbour]==NULL) {
+                if(head[neighbour]==NULL){
                     head[neighbour] = createGraphNode(neighbour,-1);
                     head[neighbour]->next = revNode;
                 }
-                else {
+                else{
                     revNode->next = head[neighbour]->next;
                     head[neighbour]->next = revNode;
                 }
@@ -54,14 +100,15 @@ void readGraph(graphNode* head[]) {
         }
     }
 }
-void printGraph(struct graphNode* head[]) {
-    for (int i = 0; i<numVertex; i++) {
+
+void printGraph(graphNode* head[]){
+    for(int i=0; i<numVertex; i++){
         graphNode* temp = head[i];
-        while (temp!=NULL) {
-            if (temp==head[i]) {
+        while(temp!=NULL){
+            if(temp == head[i]){
                 printf("Vertex %d->",temp->vertex);
             }
-            else {
+            else{
                 printf("{%d %d}, ",temp->vertex,temp->weight);
             }
             temp = temp->next;
@@ -70,107 +117,51 @@ void printGraph(struct graphNode* head[]) {
     }
 }
 
-//BFS traversal:
-//we need to make queue first
-//Queue:
-typedef struct Node {
-    graphNode* data;
-    struct Node* next;
-}Node;
-
-Node* front = NULL;
-Node* rear = NULL;
-
-int isEmpty() {
-    return front == NULL;
-}
-
-Node* createQueueNode(graphNode* data) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
-    newNode->data = data;
-    newNode->next = NULL;
-    return newNode;
-}
-
-void enqueue(graphNode* data) {
-    Node* newNode = createQueueNode(data);
-    if (!newNode) {
-        printf("Memory allocation failed.\n");
-        return;
-    }
-    if (isEmpty()) {
-        front = rear = newNode;
-        return;
-    }
-    rear->next = newNode;
-    rear = newNode;
-}
-
-graphNode* dequeue() {
-    if (isEmpty()) {
-        printf("Queue is Empty.\n");
-        return NULL;
-    }
-    graphNode* returnvalue = front->data;
-    Node* t = front;
-    front = front->next;
-    free(t);
-    return returnvalue;
-}
-
-
-//BFS traversal:
-void BFS(graphNode* head[], int start) {
-    int visited[100] = {0};
-    enqueue(head[start]);
+int visited[100] = {0};
+void dfs(graphNode* head[], int start){
+    if(head[start]==NULL)return;
     visited[start] = 1;
-    while (!isEmpty()) {
-        graphNode* node = dequeue();
-        printf("%d ",node->vertex);
-        graphNode* temp = node->next;
-        while (temp!=NULL) {
-            if (visited[temp->vertex]==0) {
-                visited[temp->vertex]=1;
-                enqueue(head[temp->vertex]);
+    printf("%d ",start);
+    graphNode* temp = head[start]->next;
+    while(temp!=NULL){
+        if(visited[temp->vertex]==0){
+            dfs(head,temp->vertex);
+        }
+        temp = temp->next;
+    }
+}
+
+void bfs(graphNode* head[], int start){
+    int visited[100] = {0};
+    if(head[start]==NULL)return;
+    visited[start] = 1;
+    enqueue(start);
+    while(!isEmpty()){
+        int node = dequeue();
+        printf("%d ",node);
+        graphNode* temp = head[node]->next;
+        while(temp!=NULL){
+            if(visited[temp->vertex]==0){
+                enqueue(temp->vertex);
+                visited[temp->vertex] = 1;
             }
             temp = temp->next;
         }
     }
 }
 
-//DFS traversal
-int visited[100] = {0};
-void DFS(graphNode* head[], int start) {
-    visited[start] = 1;
-    printf("%d ",head[start]->vertex);
-    graphNode* temp = head[start]->next;
-    while (temp!=NULL) {
-        if (visited[temp->vertex]==0) {
-            visited[temp->vertex]=1;
-            DFS(head,temp->vertex);
-        }
-        temp = temp->next;
-    }
-    front = rear = NULL;
-}
-
-int main() {
-    printf("Enter the number of vertices: ");
+int main(){
+    printf("Enter number of vertices: ");
     scanf("%d",&numVertex);
-    printf("Enter 1 if graph is directed and enter 0 if its undirected.\n");
-    scanf("%d", &isDirected);
+    printf("Enter 1 for directed graph 0 for undirected: ");
+    scanf("%d",&isDirected);
     graphNode* head[numVertex];
-    for (int i = 0; i < numVertex; i++) {
-        head[i] = NULL;
+    for(int i=0; i<numVertex; i++){
+        head[i]= NULL;
     }
     readGraph(head);
     printGraph(head);
-    printf("BFS traversal: \n");
-    BFS(head,0);
+    dfs(head,0);
     printf("\n");
-    printf("DFS traversal: \n");
-    DFS(head,0);
+    bfs(head,0);
 }
-//
-// Created by ABHIJEET CHANDRA on 20-10-2025.
-//
