@@ -43,7 +43,7 @@ public class all_important_algos {
         return map;
     }
 
-    //FOR UNDIRECTED::::::::::::
+    
     //dfs
     public static void dfs(HashMap<Integer,ArrayList<Integer>>adjList, int start, boolean [] visitedDFS){
         if(visitedDFS[start]) return; //if already visited then return (base case)
@@ -80,6 +80,7 @@ public class all_important_algos {
         }
     }
 
+    //FOR UNDIRECTED::::::::::::
     //cycle detection using dfs:
     public static boolean dfsCycleDetectionUndirected(HashMap<Integer,ArrayList<Integer>>adjList, int start, boolean [] visitedDFS, int parent) {
         visitedDFS[start] = true; //mark current vertex as visited
