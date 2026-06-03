@@ -1,3 +1,4 @@
+//using dfs:
 class Solution {
     int n;
     public boolean dfs(int [][]adjMat, int curr, int [] color, int currColor){
@@ -22,6 +23,39 @@ class Solution {
                 if(!dfs(graph,i,color,0))return false;
         }
 
+        return true;
+    }
+}
+
+
+//using bfs:
+class Solution {
+    int n;
+    public boolean bfs(int [][]adjMat, int curr, int []color){
+        Queue<Integer> q = new LinkedList<>();
+        q.add(curr);
+        color[curr] = 0;
+        while(!q.isEmpty()){
+            curr = q.poll();
+            for(int neighbor : adjMat[curr]){
+                if(color[neighbor] == color[curr])return false;
+                else if(color[neighbor] == -1){
+                    int colorNeighbor = 1 - color[curr];
+                    q.add(neighbor);
+                    color[neighbor] = colorNeighbor;
+                }
+            }
+        }
+        return true;
+    }
+    public boolean isBipartite(int[][] graph) {
+        int n = graph.length;
+        int [] color = new int[n];
+        Arrays.fill(color,-1);
+        for(int i = 0; i<n; i++){
+            if(color[i]==-1)
+                if(!bfs(graph,i,color))return false;
+        }
         return true;
     }
 }
