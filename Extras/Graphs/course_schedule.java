@@ -34,3 +34,39 @@ class Solution {
     }
 }
 
+
+//using bfs cycle detection (kahn's algo):
+class Solution {
+    int n;
+    public boolean canWriteTopo(int [][] adjMat, int [] inDegree){
+        Queue<Integer> q = new LinkedList<>();
+        int count=0;
+        for(int i = 0; i<n; i++){
+            if(inDegree[i] == 0)q.add(i);
+        }
+        while(!q.isEmpty()){
+            int node = q.poll();
+            count++;
+            for(int j = 0; j<n; j++){
+                if(adjMat[node][j] == 1){
+                    inDegree[j]--;
+                    if(inDegree[j]==0){
+                        q.add(j);
+                    }
+                }
+            }
+        }
+        return count == n;
+    }
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        n = numCourses;
+        int [][] adjMat = new int[n][n];
+        int [] inDegree = new int[n];
+        for(int i = 0; i<prerequisites.length; i++){
+            adjMat[prerequisites[i][1]][prerequisites[i][0]] = 1;
+            inDegree[prerequisites[i][0]]++;
+        }
+        return canWriteTopo(adjMat, inDegree);
+    }
+}
+
